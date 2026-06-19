@@ -53,16 +53,20 @@ func (s *Server) StartSerial() {
 		BaudRate: s.SerialBaud,
 	}
 
+	wasFailed := false
 	for {
-		log.Printf("Opening Serial Port %s...", s.SerialPort)
 		port, err := serial.Open(s.SerialPort, mode)
 		if err != nil {
-			log.Printf("Failed to open serial port %s: %v. Retrying in 5s...", s.SerialPort, err)
+			if !wasFailed {
+				log.Printf("Failed to open serial port %s: %v. Retrying in background every 5s...", s.SerialPort, err)
+				wasFailed = true
+			}
 			time.Sleep(5 * time.Second)
 			continue
 		}
 
-		log.Printf("Serial Server active on %s at %d baud. Pair your device and connect.", s.SerialPort, s.SerialBaud)
+		wasFailed = false
+		log.Printf("[Success] Opened Serial Port %s! Active at %d baud. Pair your device and connect.", s.SerialPort, s.SerialBaud)
 		HandleClient(port, s.Vehicle, s.SerialPort)
 
 		// Brief delay to prevent tight loop in case of continuous connect errors
