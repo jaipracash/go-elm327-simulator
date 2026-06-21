@@ -50,6 +50,7 @@ When the simulator is running, type any of the following commands into the termi
 | **`b`** | Toggle Low Battery | Drops battery voltage to **11.5V** |
 | **`e`** | Toggle Engine Status | Starts/stops engine (switches RPM between `900` and `0`) |
 | **`s`** | Print Vehicle Status | Displays the current metrics dashboard & DTC list |
+| **`l`** | Start Live Dashboard | Starts dynamic real-time dashboard updates (updates every 500ms). Press ENTER to exit. |
 | **`h`** | Help Menu | Prints list of available console commands |
 | **`q`** | Quit | Safely shuts down the simulator |
 

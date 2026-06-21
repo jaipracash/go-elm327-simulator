@@ -52,12 +52,21 @@ func HandleClient(conn io.ReadWriteCloser, v *vehicle.Vehicle, clientName string
 			inputBuffer = inputBuffer[idx+skip:]
 
 			cmdLine := string(cmdLineBytes)
-			log.Printf("[%s] <- %q", clientName, cmdLine)
+
+			v.RLock()
+			isLive := v.IsLiveActive
+			v.RUnlock()
+
+			if !isLive {
+				log.Printf("[%s] <- %q", clientName, cmdLine)
+			}
 
 			// Execute command (we feed the raw cmdLine plus carriage return to mimic real ELM327 newline behavior)
 			resp := session.HandleCommand(cmdLine + "\r")
 
-			log.Printf("[%s] -> %q", clientName, resp)
+			if !isLive {
+				log.Printf("[%s] -> %q", clientName, resp)
+			}
 			_, err = conn.Write([]byte(resp))
 			if err != nil {
 				log.Printf("[%s] Write error: %v", clientName, err)

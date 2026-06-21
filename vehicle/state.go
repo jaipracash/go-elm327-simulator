@@ -26,24 +26,53 @@ type Vehicle struct {
 	isOverheating bool
 	isLowBattery  bool
 	isEngineOff   bool
+	IsLiveActive  bool
 }
 
 // NewVehicle creates a vehicle with standard initialization parameters.
 func NewVehicle() *Vehicle {
 	return &Vehicle{
-		RPM:          900,
+		RPM:          0,
 		Speed:        0,
-		Temp:         35,
+		Temp:         25,
 		Fuel:         80,
-		Battery:      12.4,
-		Throttle:     15,
-		Load:         20,
+		Battery:      12.2,
+		Throttle:     0,
+		Load:         0,
 		Intake:       25,
-		Timing:       12,
+		Timing:       0,
 		MILOn:        false,
 		StoredCodes:  []string{},
 		PendingCodes: []string{},
+		isEngineOff:  true,
 	}
+}
+
+// StartEngine starts the engine and sets default idling parameters.
+func (v *Vehicle) StartEngine() {
+	v.mu.Lock()
+	defer v.mu.Unlock()
+
+	v.isEngineOff = false
+	v.RPM = 900
+	v.Battery = 13.8
+	fmt.Println("[Simulator] Engine status: STARTED.")
+}
+
+// StopEngine shuts down the engine and resets parameters.
+func (v *Vehicle) StopEngine() {
+	v.mu.Lock()
+	defer v.mu.Unlock()
+
+	v.isEngineOff = true
+	v.RPM = 0
+	v.Speed = 0
+	v.Throttle = 0
+	v.Load = 0
+	v.Timing = 0
+	v.Temp = 25
+	v.Battery = 12.2
+	fmt.Println("[Simulator] Engine status: SHUT DOWN.")
 }
 
 // ToggleMisfire toggles the pending trouble code P0301.
